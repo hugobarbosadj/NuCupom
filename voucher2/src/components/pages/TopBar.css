@@ -1,0 +1,174 @@
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #2B0000;
+    color: #fff;
+    position: relative;
+    height: auto; /* Ajuste a altura da barra conforme necessário */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Uma leve sombra para destacar a barra */
+    flex-wrap: wrap;
+}
+.topbar h1 {
+    font-family: "Microsoft JhengHei";
+    font-style: normal;
+    font-size: 48px;
+    color: #FEE88A; /* Cor do texto */
+
+}
+
+/* Melhorar o estilo do botão de login */
+.topbar button {
+    background-color: #FEE88A; /* Cor do botão */
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 160px;
+    height: auto;
+    margin-right: 10px;
+}
+
+.company-name {
+    font-size: 24px;
+    color: #fff;
+    font-weight: bold;
+}
+/* Estilo da barra de pesquisa para posicionamento no canto inferior direito */
+.search-container {
+    position: absolute;
+    bottom: 10px;   /* Distância do canto inferior */
+    right: 10px;  /* Distância do canto direito */
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.search-input {
+    width: 300px; /* Largura da barra de pesquisa */
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Estilo dos resultados da pesquisa */
+.search-results {
+    position: absolute;
+    top: 60px;
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    width: 90%;
+    max-width: 400px;
+    z-index: 10;
+}
+
+.search-results ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.search-results li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.search-results li:hover {
+    background-color: #f0f0f0;
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    background-color: #007bff;
+}
+
+.menu a:hover {
+    background-color: #0056b3;
+}
+
+
+.categories {
+    display: flex;
+    gap: 15px;
+}
+
+.categories a {
+    color: #fff;
+    font-size: 16px;
+    text-decoration: none;
+    padding: 5px 0;
+}
+
+.categories a:hover {
+    text-decoration: underline;
+}
+
+.modal-title {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #1b1b1b;
+}
+
+.login-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-modal form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+.login-modal input {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.login-modal button {
+    width: 100%;
+    padding: 10px;
+    background-color: #FEE88A;
+    color: Black;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.login-modal button:hover {
+    background-color: #FEE88A;
+}

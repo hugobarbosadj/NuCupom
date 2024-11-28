@@ -1,0 +1,24 @@
+/* src/pages/ProductPage.css */
+.product-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.product-image {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.product-details {
+    margin-bottom: 20px;
+}
+
+.voucher-info {
+    background-color: #f8f8f8;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+}

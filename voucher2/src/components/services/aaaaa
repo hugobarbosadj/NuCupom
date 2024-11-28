@@ -1,0 +1,80 @@
+import axios from 'axios';
+
+const API_CEP = 'https://viacep.com.br/ws';
+const API_URL = '/api/empresa';
+
+// Função auxiliar para obter o token do localStorage
+const getToken = () => localStorage.getItem('token');
+
+// Função auxiliar para configurar headers de autenticação
+const getAuthHeaders = () => ({
+    headers: {
+        Authorization: `Bearer ${getToken()}`,
+    },
+});
+
+const empresaService = {
+    // Cadastro de empresa
+    async registerCompany(data) {
+        try {
+            const formData = new FormData();
+            Object.keys(data).forEach((key) => {
+                if (data[key]) formData.append(key, data[key]);
+            });
+
+            // Adicionando os dados do objeto Empresa como JSON
+            const empresaData = {
+                razaoSocial: data.razaoSocial,
+                cnpj: data.cnpj,
+                nomeCompletoAdm: data.nomeAdm, // Corrigido nomeAdm
+                email: data.email,
+                senha: data.senha,
+                endereco: {
+                    rua: data.rua,
+                    numero: data.numero,
+                    bairro: data.bairro,
+                    cidade: data.cidade,
+                    estado: data.estado,
+                    cep: data.cep,
+                },
+                telefone: data.telefone,
+            };
+
+            formData.append('empresa', JSON.stringify(empresaData));
+
+            // Adiciona os arquivos separadamente
+            if (data.logo) {
+                formData.append('logo', data.logo);
+            }
+            if (data.fotoEmpresa) {
+                formData.append('fotoEmpresa', data.fotoEmpresa);
+            }
+
+            const response = await axios.post(`${API_URL}/cadastrar`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error('Erro no serviço de cadastro de empresa:', error);
+            throw error;
+        }
+    },
+
+    // Buscar informações do CEP
+    async buscarCep(cep) {
+        try {
+            const response = await axios.get(`${API_CEP}/${cep}/json`);
+            return response.data; // Retorna os dados do endereço
+        } catch (error) {
+            console.error('Erro ao buscar CEP:', error);
+            throw error;
+        }
+    },
+
+    // Outras funções omitidas para brevidade (mantenha as que você precisa)...
+};
+
+export default empresaService;
