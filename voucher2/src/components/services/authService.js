@@ -1,4 +1,6 @@
 import axios from 'axios';
+import api from './api';
+
 
 const API_URL = 'http://localhost:8080/api/auth/login';
 
@@ -16,4 +18,9 @@ export const login = async (credentials) => {
         console.error('Erro ao fazer login:', error.response || error);
         throw error.response?.data || 'Erro ao tentar fazer login.';
     }
+
+//    const authService = {
+  //      login: (credentials) => api.post('/login', credentials),
+        // outros métodos...
+  //  };
 };

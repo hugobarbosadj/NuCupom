@@ -51,8 +51,9 @@ export const empresaService = {
             const response = await axios.post(`${API_URL}/cadastrar`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                }
+                },
             });
+
 
             return response.data;
         } catch (error) {

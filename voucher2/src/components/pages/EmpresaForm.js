@@ -50,7 +50,6 @@ const CadastroEmpresa = () => {
         try {
             await empresaService.registerCompany(formData);
             alert('Cadastro realizado com sucesso!');
-            console.log('passou no await')
         } catch (error) {
             console.error('Erro ao cadastrar empresa:', error);
             alert('Falha no cadastro. Verifique os dados e tente novamente.');
