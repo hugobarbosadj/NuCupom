@@ -144,6 +144,7 @@ export async function buscarCep(cep) {
 
 // Exportação do serviço principal
 export default {
+    async registerCompany(data){},
     createVoucher(voucherData) {
         return Promise.resolve(undefined);
     },
@@ -164,4 +165,5 @@ export default {
         return Promise.resolve(undefined);
     },
     getToken
+
 };

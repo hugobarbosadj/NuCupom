@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import empresaService, { buscarCep } from '../services/empresaService'; // Import único
+import {empresaService,  buscarCep } from '../services/empresaService'; // Import único
 import './EmpresaForm.css';
 import InputMask from 'react-input-mask';
 
@@ -48,7 +48,7 @@ const CadastroEmpresa = () => {
         }
 
         try {
-            await empresaService.registerCompany(formData);
+            await empresaService.registerCompany(formData); // Certifique-se de que este método existe
             alert('Cadastro realizado com sucesso!');
         } catch (error) {
             console.error('Erro ao cadastrar empresa:', error);
