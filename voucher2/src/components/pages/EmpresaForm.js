@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {empresaService,  buscarCep } from '../services/empresaService'; // Import único
+import empresaService from '../services/empresaService'; // Import único para evitar redundância
 import './EmpresaForm.css';
 import InputMask from 'react-input-mask';
 
@@ -7,79 +7,137 @@ const CadastroEmpresa = () => {
     const [formData, setFormData] = useState({
         razaoSocial: '',
         cnpj: '',
-        nomeAdm: '',
+        nomeCompletoAdm: '',
         email: '',
         senha: '',
         confirmarSenha: '',
-        rua: '',
-        numero: '',
-        bairro: '',
-        cidade: '',
-        estado: '',
-        cep: '',
         telefone: '',
         logo: null,
         fotoEmpresa: null,
+        endereco: {
+            cep: '',
+            rua: '',
+            numero: '',
+            bairro: '',
+            cidade: '',
+            estado: '',
+        },
     });
 
     const [logoPreview, setLogoPreview] = useState(null);
     const [fotoEmpresaPreview, setFotoEmpresaPreview] = useState(null);
 
+    // Atualiza os campos do formulário
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+
+        if (name.startsWith('endereco.')) {
+            const field = name.split('.')[1];
+            setFormData((prevState) => ({
+                ...prevState,
+                endereco: {
+                    ...prevState.endereco,
+                    [field]: value,
+                },
+            }));
+
+            if (field === 'cep') {
+                const cepSemMascara = value.replace(/\D/g, '');
+                if (cepSemMascara.length === 8) {
+                    buscarCepAutomatico(value);
+                }
+            }
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
 
+    // Upload de arquivos
     const handleFileChange = (e) => {
         const { name, files } = e.target;
         const file = files[0];
-        setFormData({ ...formData, [name]: file });
+        setFormData((prevState) => ({ ...prevState, [name]: file }));
 
         if (name === 'logo') setLogoPreview(URL.createObjectURL(file));
         if (name === 'fotoEmpresa') setFotoEmpresaPreview(URL.createObjectURL(file));
     };
 
+    // Busca o endereço automaticamente pelo CEP
+    const isValidCep = (cep) => /^[0-9]{5}-[0-9]{3}$/.test(cep);
+
+    const buscarCepAutomatico = async (cep) => {
+        if (!isValidCep(cep)) {
+            console.warn('CEP inválido. O formato deve ser XXXXX-XXX.');
+            return;
+        }
+
+        try {
+            const endereco = await empresaService.buscarCep(cep);
+            setFormData((prevState) => ({
+                ...prevState,
+                endereco: {
+                    ...prevState.endereco,
+                    rua: endereco.logradouro || '',
+                    bairro: endereco.bairro || '',
+                    cidade: endereco.localidade || '',
+                    estado: endereco.uf || '',
+                },
+            }));
+        } catch (error) {
+            console.error('Erro ao buscar o CEP:', error);
+            alert('CEP inválido ou erro ao buscar o endereço.');
+        }
+    };
+
+    // Submissão do formulário
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // Validação das senhas
         if (formData.senha !== formData.confirmarSenha) {
             alert('As senhas não coincidem. Tente novamente.');
             return;
         }
 
+        // Verifique se os campos de endereço estão preenchidos
+        const { endereco } = formData;
+        if (!endereco || !endereco.cep || !endereco.rua || !endereco.numero || !endereco.bairro || !endereco.cidade || !endereco.estado) {
+            alert('Preencha todos os campos de endereço.');
+            return;
+        }
+
+        const data = new FormData();
+
+        // Adiciona os campos diretamente ao FormData
+        data.append('razaoSocial', formData.razaoSocial);
+        data.append('cnpj', formData.cnpj);
+        data.append('nomeCompletoAdm', formData.nomeCompletoAdm);
+        data.append('email', formData.email);
+        data.append('senha', formData.senha);
+        data.append('telefone', formData.telefone);
+        data.append('endereco[cep]', formData.endereco.cep);
+        data.append('endereco[rua]', formData.endereco.rua);
+        data.append('endereco[numero]', formData.endereco.numero);
+        data.append('endereco[bairro]', formData.endereco.bairro);
+        data.append('endereco[cidade]', formData.endereco.cidade);
+        data.append('endereco[estado]', formData.endereco.estado);
+
+        // Adiciona arquivos
+        if (formData.logo) data.append('logo', formData.logo);
+        if (formData.fotoEmpresa) data.append('fotoEmpresa', formData.fotoEmpresa);
+
         try {
-            await empresaService.registerCompany(formData); // Certifique-se de que este método existe
+            await empresaService.registerCompany(data);
             alert('Cadastro realizado com sucesso!');
         } catch (error) {
             console.error('Erro ao cadastrar empresa:', error);
             alert('Falha no cadastro. Verifique os dados e tente novamente.');
         }
+        console.log('FormData enviado:', formData);
+        console.log('Endereço:', formData.endereco);
+
     };
 
-    const handleCepBlur = async (e) => {
-        const cep = e.target.value;
-
-        if (!cep || cep.length !== 8) {
-            console.error('CEP inválido ou vazio.');
-            return;
-        }
-
-        try {
-            const endereco = await buscarCep(cep);
-
-            if (endereco) {
-                setFormData((prevData) => ({
-                    ...prevData,
-                    rua: endereco.logradouro || '',
-                    bairro: endereco.bairro || '',
-                    cidade: endereco.localidade || '',
-                    estado: endereco.uf || '',
-                }));
-            }
-        } catch (error) {
-            console.error('Erro ao buscar CEP:', error.message);
-        }
-    };
 
     return (
         <div className="cadastro-empresa-container">
@@ -106,9 +164,9 @@ const CadastroEmpresa = () => {
                 </InputMask>
                 <input
                     type="text"
-                    name="nomeAdm"
+                    name="nomeCompletoAdm"
                     placeholder="Nome Completo do Administrador"
-                    value={formData.nomeAdm}
+                    value={formData.nomeCompletoAdm}
                     onChange={handleChange}
                     required
                 />
@@ -138,48 +196,55 @@ const CadastroEmpresa = () => {
                 />
 
                 <h3>Endereço</h3>
-                <input
-                    type="text"
-                    name="cep"
+                <InputMask
+                    mask="99999-999"
+                    name="endereco.cep"
                     placeholder="CEP"
-                    value={formData.cep}
+                    value={formData.endereco.cep}
                     onChange={handleChange}
-                    onBlur={handleCepBlur}
-                />
+                    required
+                >
+                    {(inputProps) => <input {...inputProps} />}
+                </InputMask>
                 <input
                     type="text"
-                    name="cidade"
-                    placeholder="Cidade"
-                    value={formData.cidade}
-                    onChange={handleChange}
-                />
-                <input
-                    type="text"
-                    name="estado"
-                    placeholder="Estado"
-                    value={formData.estado}
-                    onChange={handleChange}
-                />
-                <input
-                    type="text"
-                    name="rua"
+                    name="endereco.rua"
                     placeholder="Rua"
-                    value={formData.rua}
+                    value={formData.endereco.rua}
                     onChange={handleChange}
+                    required
                 />
                 <input
                     type="text"
-                    name="numero"
+                    name="endereco.numero"
                     placeholder="Número"
-                    value={formData.numero}
+                    value={formData.endereco.numero}
                     onChange={handleChange}
+                    required
                 />
                 <input
                     type="text"
-                    name="bairro"
+                    name="endereco.bairro"
                     placeholder="Bairro"
-                    value={formData.bairro}
+                    value={formData.endereco.bairro}
                     onChange={handleChange}
+                    required
+                />
+                <input
+                    type="text"
+                    name="endereco.cidade"
+                    placeholder="Cidade"
+                    value={formData.endereco.cidade}
+                    onChange={handleChange}
+                    required
+                />
+                <input
+                    type="text"
+                    name="endereco.estado"
+                    placeholder="Estado"
+                    value={formData.endereco.estado}
+                    onChange={handleChange}
+                    required
                 />
 
                 <h3>Contato</h3>
@@ -189,22 +254,21 @@ const CadastroEmpresa = () => {
                     placeholder="Telefone"
                     value={formData.telefone}
                     onChange={handleChange}
+                    required
                 >
                     {(inputProps) => <input {...inputProps} />}
                 </InputMask>
 
                 <h3>Imagens</h3>
                 <div className="file-input">
-                    <label>Logo da Empresa </label>
+                    <label>Logo da Empresa</label>
                     <input type="file" name="logo" onChange={handleFileChange} />
                     {logoPreview && <img src={logoPreview} alt="Prévia da Logo" className="preview-image" />}
                 </div>
                 <div className="file-input">
-                    <label>Foto da Empresa </label>
+                    <label>Foto da Empresa</label>
                     <input type="file" name="fotoEmpresa" onChange={handleFileChange} />
-                    {fotoEmpresaPreview && (
-                        <img src={fotoEmpresaPreview} alt="Prévia da foto da empresa" className="preview-image" />
-                    )}
+                    {fotoEmpresaPreview && <img src={fotoEmpresaPreview} alt="Prévia da Foto" className="preview-image" />}
                 </div>
 
                 <button type="submit" className="btn-cadastrar">

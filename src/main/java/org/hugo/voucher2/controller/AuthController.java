@@ -1,9 +1,7 @@
 package org.hugo.voucher2.controller;
 
 import org.hugo.voucher2.model.Empresa;
-import org.hugo.voucher2.modelLogin.JwtUtil;
-import org.hugo.voucher2.modelLogin.LoginRequest;
-import org.hugo.voucher2.modelLogin.LoginResponse;
+import org.hugo.voucher2.modelLogin.*;
 import org.hugo.voucher2.service.EmpresaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,36 +22,27 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
-    private EmpresaService empresaService; // Injeção do EmpresaService
+    private JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getLogin(), loginRequest.getSenha()
-                    )
-            );
+            // Autenticar
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String jwtToken = jwtUtil.generateToken(userDetails);
+            // Buscar detalhes do usuário
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginRequest.getUsername());
 
-            return ResponseEntity.ok(new LoginResponse(jwtToken));
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(401).body("Login ou senha incorretos.");
-        }
-    }
+            // Gerar o token JWT
+            String jwt = jwtUtil.generateToken(userDetails.getUsername());
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Empresa empresa) {
-        try {
-            Empresa empresaSalva = empresaService.salvarEmpresa(empresa, null, null);
-            return ResponseEntity.ok("Cadastro realizado com sucesso!");
+            return ResponseEntity.ok(new AuthResponse(jwt));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Erro ao cadastrar empresa: " + e.getMessage());
+            return ResponseEntity.status(401).body("Usuário ou senha inválidos.");
         }
     }
 }

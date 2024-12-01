@@ -28,17 +28,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
         http
-                .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults()) // Ativa CORS
+                .csrf(csrf -> csrf.disable()) // Desativa CSRF
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/register", "/login", "/api/empresa/cadastrar").permitAll()
+                        // Rotas públicas (não requerem autenticação)
+                        .requestMatchers("/api/auth/**", "/register", "/api/empresa/login", "/api/empresa/cadastrar", "/api/cep/**").permitAll()
+                        // Qualquer outra rota requer autenticação
                         .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                // Define como Stateless (sem estado, ideal para JWT)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // Adiciona o filtro de autenticação antes do UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 }

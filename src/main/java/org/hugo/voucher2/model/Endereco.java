@@ -15,6 +15,9 @@ public class Endereco {
 
     private Integer numero;
 
+    @NotBlank(message = "O bairro é obrigatório.")
+    private String bairro; // Adicionado o atributo bairro
+
     @NotBlank(message = "A cidade é obrigatória.")
     private String cidade;
 
@@ -33,20 +36,14 @@ public class Endereco {
             ViaCepResponse response = cepService.buscarCep(cep);
             if (response != null) {
                 this.rua = response.getLogradouro();
+                this.bairro = response.getBairro(); // Adicionado preenchimento do bairro
                 this.cidade = response.getLocalidade();
                 this.estado = response.getUf();
             }
         }
     }
+
     // Getters e Setters
-
-    public CepServico getCepService() {
-        return cepService;
-    }
-
-    public void setCepService(CepServico cepService) {
-        this.cepService = cepService;
-    }
 
     public String getRua() {
         return rua;
@@ -62,6 +59,14 @@ public class Endereco {
 
     public void setNumero(Integer numero) {
         this.numero = numero;
+    }
+
+    public String getBairro() {
+        return bairro;
+    }
+
+    public void setBairro(String bairro) {
+        this.bairro = bairro;
     }
 
     public String getCidade() {
@@ -86,5 +91,13 @@ public class Endereco {
 
     public void setCep(String cep) {
         this.cep = cep;
+    }
+
+    public CepServico getCepService() {
+        return cepService;
+    }
+
+    public void setCepService(CepServico cepService) {
+        this.cepService = cepService;
     }
 }

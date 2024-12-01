@@ -1,6 +1,7 @@
 package org.hugo.voucher2.modelLogin;
 
 import org.hugo.voucher2.model.Empresa;
+import org.hugo.voucher2.model.EmpresaUserDetails;
 import org.hugo.voucher2.repository.EmpresaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -19,16 +20,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     private EmpresaRepository empresaRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        // Carrega a empresa por email ou CNPJ
-        Empresa empresa = empresaRepository.findByEmailOrCnpj(login, login)
-                .orElseThrow(() -> new UsernameNotFoundException("Empresa não encontrada com email ou CNPJ: " + login));
-
-        // Retorna um UserDetails com os dados da empresa
-        return new org.springframework.security.core.userdetails.User(
-                empresa.getEmail(),
-                empresa.getSenha(),
-                new ArrayList<>() // Lista vazia de permissões
-        );
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // Busca empresa pelo CNPJ ou Email
+        Empresa empresa = empresaRepository.findByEmailOrCnpj(username, username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com email ou CNPJ: " + username));
+        return new EmpresaUserDetails(empresa);
     }
 }

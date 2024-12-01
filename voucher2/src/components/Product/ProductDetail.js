@@ -158,7 +158,6 @@ function ProductDetail() {
                         <div className="company-info">
                             <h3>Informações da Empresa</h3>
                             <p>Nome: {company.razaoSocial}</p>
-                            <p>CNPJ: {company.cnpj}</p>
                             <p>Endereço: {company.endereco}</p>
                         </div>
                     )}

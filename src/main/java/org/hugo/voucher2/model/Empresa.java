@@ -19,7 +19,7 @@ public class Empresa {
     private String razaoSocial;
 
     @NotNull(message = "CNPJ é obrigatório.")
-    @Pattern(regexp = "\\d{14}", message = "CNPJ deve conter 14 dígitos.")
+    @Pattern(regexp ="[0-9]{2}\\.?[0-9]{3}\\.?[0-9]{3}\\/?[0-9]{4}\\-?[0-9]{2}", message = "CNPJ deve conter 14 dígitos.")
     private String cnpj;
 
     @NotBlank(message = "O nome completo do administrador é obrigatório.")
@@ -35,6 +35,7 @@ public class Empresa {
 
     private String logoUrl;
     private String fotoEmpresaUrl;
+
 
     @Embedded
     @Valid

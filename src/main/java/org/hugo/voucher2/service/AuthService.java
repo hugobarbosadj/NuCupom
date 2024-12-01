@@ -12,7 +12,6 @@ public class AuthService {
     @Autowired
     private EmpresaRepository empresaRepository;
 
-
     public boolean autenticarEmpresa(String email, String senha) {
         // Buscando a empresa pelo email
         Empresa empresa = empresaRepository.findByEmail(email);

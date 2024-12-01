@@ -5,7 +5,6 @@ import axios from 'axios';
 // Criação da instância axios
 const api = axios.create({
     baseURL: 'http://localhost:8080/api',
-    withCredentials: true, // Necessário se estiver usando autenticação baseada em cookies
 });
 
 // Interceptor para adicionar o token de autenticação

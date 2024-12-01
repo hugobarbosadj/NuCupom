@@ -49,6 +49,7 @@ public class EmpresaService {
     public Empresa atualizarEmpresa(Long id, Empresa empresaAtualizada, MultipartFile logo, MultipartFile fotoEmpresa) throws IOException {
         Empresa empresaExistente = obterEmpresa(id);
 
+        empresaExistente.setRazaoSocial(empresaAtualizada.getRazaoSocial());
         empresaExistente.setNomeCompletoAdm(empresaAtualizada.getNomeCompletoAdm());
         empresaExistente.setCnpj(empresaAtualizada.getCnpj());
         empresaExistente.setEndereco(empresaAtualizada.getEndereco());
