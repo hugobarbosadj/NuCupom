@@ -1,52 +1,47 @@
 import API from './api';
 
 const empresaService = {
-    // Cadastro de empresa
-    async registerCompany(data) {
+        // Cadastro de empresa
+        async registerCompany(data) {
+            if (!data.endereco) {
+                throw new Error("O campo 'endereco' está ausente ou inválido.");
+            }
 
-        if (!data.endereco) {
-            throw new Error("O campo 'endereco' está ausente ou inválido.");
-        }
+            const formData = new FormData();
 
-        const formData = new FormData();
-        // Adiciona os campos diretamente ao FormData
-        formData.append('razaoSocial', data.razaoSocial);
-        formData.append('cnpj', data.cnpj);
-        formData.append('nomeCompletoAdm', data.nomeCompletoAdm);
-        formData.append('email', data.email);
-        formData.append('senha', data.senha);
-        formData.append('telefone', data.telefone);
+            // Adiciona os campos principais
+            formData.append('razaoSocial', data.razaoSocial);
+            formData.append('cnpj', data.cnpj);
+            formData.append('nomeCompletoAdm', data.nomeCompletoAdm);
+            formData.append('email', data.email);
+            formData.append('senha', data.senha);
+            formData.append('telefone', data.telefone);
 
-        // Adiciona os campos de endereço
-        formData.append('endereco[cep]', data.endereco.cep);
-        formData.append('endereco[rua]', data.endereco.rua);
-        formData.append('endereco[numero]', data.endereco.numero);
-        formData.append('endereco[bairro]', data.endereco.bairro);
-        formData.append('endereco[cidade]', data.endereco.cidade);
-        formData.append('endereco[estado]', data.endereco.estado);
+            // Adiciona os campos de endereço
+            formData.append('endereco[cep]', data.endereco.cep);
+            formData.append('endereco[rua]', data.endereco.rua);
+            formData.append('endereco[numero]', data.endereco.numero);
+            formData.append('endereco[bairro]', data.endereco.bairro);
+            formData.append('endereco[cidade]', data.endereco.cidade);
+            formData.append('endereco[estado]', data.endereco.estado);
 
+            // Adicionar os arquivos (logo e foto da empresa)
+            if (data.logo) formData.append('logo', data.logo);
+            if (data.fotoEmpresa) formData.append('fotoEmpresa', data.fotoEmpresa);
 
-        // Adicionar os campos do endereço individualmente
-        Object.keys(data.endereco).forEach((key) => {
-            formData.append(`endereco.${key}`, data.endereco[key]);
-        });
+            try {
+                const response = await API.post('/empresa/cadastrar', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                return response.data;
+            } catch (error) {
+                console.error('Erro ao registrar empresa:', error.response?.data || error.message);
+                throw error;
+            }
+        },
 
-        // Adicionar os arquivos (logo e foto da empresa)
-        if (data.logo) formData.append('logo', data.logo);
-        if (data.fotoEmpresa) formData.append('fotoEmpresa', data.fotoEmpresa);
-
-        try {
-            const response = await API.post('/empresa/cadastrar', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            return response.data;
-        } catch (error) {
-            console.error('Erro ao registrar empresa:', error.response?.data || error.message);
-            throw error;
-        }
-    },
 
 
     // Obter informações da empresa por ID
