@@ -24,8 +24,6 @@ public class AuthController {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
-    @Autowired
-    private JwtUtil jwtUtil;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
@@ -38,7 +36,7 @@ public class AuthController {
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginRequest.getUsername());
 
             // Gerar o token JWT
-            String jwt = jwtUtil.generateToken(userDetails.getUsername());
+            String jwt = JwtTokenProvider.generateToken(userDetails.getUsername());
 
             return ResponseEntity.ok(new AuthResponse(jwt));
         } catch (Exception e) {

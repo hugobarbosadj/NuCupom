@@ -3,7 +3,7 @@ package org.hugo.voucher2.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import org.hugo.voucher2.model.Empresa;
-import org.hugo.voucher2.modelLogin.JwtUtil;
+import org.hugo.voucher2.modelLogin.JwtTokenProvider;
 import org.hugo.voucher2.modelLogin.LoginRequest;
 import org.hugo.voucher2.modelLogin.LoginResponse;
 import org.hugo.voucher2.modelProduto.Produto;
@@ -17,11 +17,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,13 +50,15 @@ public class EmpresaController {
     private UserDetailsService userDetailsService;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/cadastrar")
     public ResponseEntity<?> cadastrarEmpresa(
             @RequestPart("empresa") String empresaJson,
             @RequestPart(value = "logo", required = false) MultipartFile logo,
             @RequestPart(value = "fotoEmpresa", required = false) MultipartFile fotoEmpresa) {
+        System.out.println("Entrou no endpoint /cadastrar");
+
 
         try {
             // Log para verificar a entrada
@@ -161,7 +163,7 @@ public class EmpresaController {
                     new UsernamePasswordAuthenticationToken(loginRequest.getLogin(), loginRequest.getSenha())
             );
             UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getLogin());
-            String jwt = jwtUtil.generateToken(userDetails.getUsername());
+            String jwt = jwtTokenProvider.generateToken(userDetails.getUsername());
             return ResponseEntity.ok(new LoginResponse(jwt));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);
@@ -182,7 +184,7 @@ public class EmpresaController {
 
             try {
                 ResponseEntity<String> response = restTemplate.getForEntity(viaCepUrl, String.class);
-                if (response.getStatusCode().is2xxSuccessful() && !response.getBody().contains("\"erro\": true")) {
+                if (response.getStatusCode().is2xxSuccessful() && !Objects.requireNonNull(response.getBody()).contains("\"erro\": true")) {
                     return ResponseEntity.ok(response.getBody());
                 } else {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("CEP não encontrado.");
