@@ -24,5 +24,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com email ou CNPJ: " + username));
         return new EmpresaUserDetails(empresa);
     }
+
 }
 

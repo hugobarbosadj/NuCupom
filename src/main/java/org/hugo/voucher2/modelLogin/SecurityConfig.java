@@ -35,17 +35,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(customUserDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
-
-    @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(customUserDetailsService); // Configura o UserDetailsService
+        authProvider.setPasswordEncoder(passwordEncoder());          // Configura o PasswordEncoder
+        return authProvider;
+    }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -58,6 +59,16 @@ public class SecurityConfig {
                                 "/api/empresas/cadastrar",
                                 "/api/cep/**"
                         ).permitAll()
+                        .requestMatchers("/api/{empresaId}/produto/cadastrar",
+                                "/api/empresas/info",
+                                "/api/empresas/{id}",
+                                "/api/empresas/",
+                                "/api/produtos/**",
+                                "/api/vouchers/verificar/{id}",
+                                "/api/vouchers/produto{id}",
+                                "/api/vouchers/{id}",
+                                "/api/vouchers/criar").authenticated() // Exigem token
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

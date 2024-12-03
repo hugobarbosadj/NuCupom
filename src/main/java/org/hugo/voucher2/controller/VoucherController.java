@@ -25,13 +25,13 @@ public class VoucherController {
         this.snsService = snsService;
     }
 
-    @PostMapping
+    @PostMapping("/criar")
     public ResponseEntity<Voucher> criarVoucher(@RequestBody Voucher voucher) {
         Voucher novoVoucher = voucherService.salvarVoucher(voucher);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoVoucher);
     }
 
-    @GetMapping("/produto/{produtoId}")
+    @GetMapping("/produto/{produto{Id}")
     public ResponseEntity<List<Voucher>> obterVouchersPorProduto(@PathVariable Long produtoId) {
         List<Voucher> vouchers = voucherService.obterVouchersPorProduto(produtoId);
         return ResponseEntity.ok(vouchers);

@@ -44,6 +44,7 @@ public class Endereco {
         }
     }
 
+
     // Getters e Setters
 
     public String getRua() {
@@ -101,4 +102,6 @@ public class Endereco {
     public void setCepService(CepServico cepService) {
         this.cepService = cepService;
     }
+
+
 }
