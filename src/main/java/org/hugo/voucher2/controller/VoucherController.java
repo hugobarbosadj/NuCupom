@@ -15,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/vouchers")
 public class VoucherController {
-
     private final VoucherService voucherService;
     private final SnsService snsService;
 

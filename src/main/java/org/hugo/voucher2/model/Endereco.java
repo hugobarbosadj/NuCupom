@@ -31,6 +31,7 @@ public class Endereco {
     @Transient
     private CepServico cepService; // Injetar via Spring ou manualmente
 
+
     public void preencherEnderecoPorCep() {
         if (cep != null) {
             ViaCepResponse response = cepService.buscarCep(cep);

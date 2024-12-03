@@ -1,0 +1,13 @@
+-------Porta 8080 em Uso------
+Verificar o Processo na Porta
+
+Abra o Prompt de Comando como administrador.
+Execute:
+netstat -ano | findstr :8080
+
+Você verá algo como:
+TCP    0.0.0.0:8080    LISTENING    1234
+O número no final é o PID (ID do processo).
+
+Com o PID em mãos, finalize o processo:
+taskkill /PID 1234 /F

@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 
 @Service
@@ -43,8 +44,23 @@ public class EmpresaService {
     }
 
     private String salvarArquivo(MultipartFile arquivo) throws IOException {
-        return "caminho/para/arquivo";
+        String diretorio = "C:\\Users\\hugob\\Desktop\\8° Termo\\TCC\\voucher-2\\src\\main\\java\\org\\hugo\\voucher2\\repository\\imagensSalvas";
+        File pasta = new File(diretorio);
+
+        // Verifica se o diretório existe, se não, cria
+        if (!pasta.exists()) {
+            pasta.mkdirs();
+        }
+
+        // Define o caminho completo do arquivo
+        String caminhoCompleto = diretorio + File.separator + arquivo.getOriginalFilename();
+
+        // Salva o arquivo
+        arquivo.transferTo(new File(caminhoCompleto));
+
+        return caminhoCompleto; // Retorna o caminho completo do arquivo
     }
+
 
     public Empresa atualizarEmpresa(Long id, Empresa empresaAtualizada, MultipartFile logo, MultipartFile fotoEmpresa) throws IOException {
         Empresa empresaExistente = obterEmpresa(id);

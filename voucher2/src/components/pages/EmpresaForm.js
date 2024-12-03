@@ -106,28 +106,9 @@ const CadastroEmpresa = () => {
             return;
         }
 
-        const data = new FormData();
-
-        // Adiciona os campos diretamente ao FormData
-        data.append('razaoSocial', formData.razaoSocial);
-        data.append('cnpj', formData.cnpj);
-        data.append('nomeCompletoAdm', formData.nomeCompletoAdm);
-        data.append('email', formData.email);
-        data.append('senha', formData.senha);
-        data.append('telefone', formData.telefone);
-        data.append('endereco[cep]', formData.endereco.cep);
-        data.append('endereco[rua]', formData.endereco.rua);
-        data.append('endereco[numero]', formData.endereco.numero);
-        data.append('endereco[bairro]', formData.endereco.bairro);
-        data.append('endereco[cidade]', formData.endereco.cidade);
-        data.append('endereco[estado]', formData.endereco.estado);
-
-        // Adiciona arquivos
-        if (formData.logo) data.append('logo', formData.logo);
-        if (formData.fotoEmpresa) data.append('fotoEmpresa', formData.fotoEmpresa);
-
         try {
-            await empresaService.registerCompany(data);
+            console.log(formData)
+            await empresaService.registerCompany(formData);
             alert('Cadastro realizado com sucesso!');
         } catch (error) {
             console.error('Erro ao cadastrar empresa:', error);

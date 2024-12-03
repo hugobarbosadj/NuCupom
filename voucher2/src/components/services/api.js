@@ -9,20 +9,25 @@ const axiosInstance = axios.create({
     },
 });
 
-// Interceptador para adicionar o token de autenticação a todas as requisições
+const publicEndpoints = [
+    '/cep/buscar',
+    '/empresa/login',
+    '/empresa/cadastrar',
+    '/auth/register',
+];
+
 // Interceptador para adicionar o token de autenticação a todas as requisições (exceto para alguns endpoints)
 axiosInstance.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token'); // Recupera o token do localStorage
-
-        // Excluir o cabeçalho Authorization em endpoints específicos (como o de busca de CEP)
-        if (!config.url.includes('/cep/buscar') && token) {
+        const token = localStorage.getItem('token');
+        if (!publicEndpoints.some(endpoint => config.url.includes(endpoint)) && token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     },
     (error) => Promise.reject(error)
 );
+
 
 
 // Interceptador para tratamento de respostas ou erros globais

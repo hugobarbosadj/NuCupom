@@ -32,7 +32,15 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Desativa CSRF
                 .authorizeHttpRequests(auth -> auth
                         // Rotas públicas (não requerem autenticação)
-                        .requestMatchers("/api/auth/**", "/register", "/api/empresa/login", "/api/empresa/cadastrar", "/api/cep/**").permitAll()
+                        .requestMatchers("/api/auth/**",
+                                "/register",
+                                "/api/empresa/login",
+                                "/api/empresa/cadastrar",
+                                "/api/cep/**").permitAll()
+
+                        //.requestMatchers("/api/public/**").permitAll() // Liberadas sem autenticação
+                        //.requestMatchers("/api/private/**").authenticated() // Exigem token
+
                         // Qualquer outra rota requer autenticação
                         .anyRequest().authenticated()
                 )

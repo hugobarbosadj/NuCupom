@@ -59,11 +59,18 @@ public class EmpresaController {
             @RequestPart(value = "fotoEmpresa", required = false) MultipartFile fotoEmpresa) {
 
         try {
+            // Log para verificar a entrada
+            System.out.println("Dados da empresa recebidos: " + empresaJson);
+
             ObjectMapper mapper = new ObjectMapper();
             Empresa empresa = mapper.readValue(empresaJson, Empresa.class);
 
-            empresa.getEndereco().preencherEnderecoPorCep(); // Preenche o endereço a partir do CEP
+            // Log para verificar o objeto convertido
+            System.out.println("Empresa convertida: " + empresa);
+
+            empresa.getEndereco().preencherEnderecoPorCep();
             Empresa novaEmpresa = empresaService.salvarEmpresa(empresa, logo, fotoEmpresa);
+
             return ResponseEntity.status(HttpStatus.CREATED).body(novaEmpresa);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -73,6 +80,7 @@ public class EmpresaController {
                     .body("Erro ao salvar empresa. Detalhes: " + e.getMessage());
         }
     }
+
 
 
 
@@ -160,7 +168,6 @@ public class EmpresaController {
         }
     }
 
-    @RestController
     @RequestMapping("/api/cep")
     public static class CepController {
 

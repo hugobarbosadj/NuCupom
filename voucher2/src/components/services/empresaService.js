@@ -3,6 +3,7 @@ import API from './api';
 const empresaService = {
         // Cadastro de empresa
         async registerCompany(data) {
+            console.log(data)
             if (!data.endereco) {
                 throw new Error("O campo 'endereco' está ausente ou inválido.");
             }
@@ -30,9 +31,9 @@ const empresaService = {
             if (data.fotoEmpresa) formData.append('fotoEmpresa', data.fotoEmpresa);
 
             try {
-                const response = await API.post('/empresa/cadastrar', formData, {
+                const response = await API.post('http://localhost:8080/api/empresa/cadastrar', formData, {
                     headers: {
-                        'Content-Type': 'multipart/form-data',
+                        'Content-Type': 'application/json',
                     },
                 });
                 return response.data;
@@ -46,6 +47,7 @@ const empresaService = {
 
     // Obter informações da empresa por ID
     async getEmpresaInfo(empresaId) {
+
         try {
             const response = await API.get(`/empresa/${empresaId}`);
             return response.data;
