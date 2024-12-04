@@ -1,66 +1,50 @@
 package org.hugo.voucher2.model;
 
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Transient;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import org.hugo.voucher2.service.CepServico;
 
 @Embeddable
 public class Endereco {
-
-    @NotBlank(message = "A rua é obrigatória.")
     private String rua;
-
-    private Integer numero;
-
-    @NotBlank(message = "O bairro é obrigatório.")
-    private String bairro; // Adicionado o atributo bairro
-
-    @NotBlank(message = "A cidade é obrigatória.")
-    private String cidade;
-
-    @NotBlank(message = "O estado é obrigatório.")
-    @Size(min = 2, max = 2, message = "O estado deve ter 2 caracteres.")
-    private String estado;
-
-    @Pattern(regexp = "\\d{5}-\\d{3}", message = "CEP inválido.")
+    private String bairro;
+    private String cidade; // Deve existir
+    private String estado; // Deve existir
     private String cep;
 
-    @Transient
-    private CepServico cepService; // Injetar via Spring ou manualmente
-
-
-    public void preencherEnderecoPorCep() {
-        if (cep != null) {
-            ViaCepResponse response = cepService.buscarCep(cep);
+    public void preencherEnderecoPorCep(CepServico cepServico) {
+        if (this.cep != null && !this.cep.isEmpty()) {
+            ViaCepResponse response = cepServico.buscarCep(this.cep);
             if (response != null) {
                 this.rua = response.getLogradouro();
-                this.bairro = response.getBairro(); // Adicionado preenchimento do bairro
+                this.bairro = response.getBairro();
                 this.cidade = response.getLocalidade();
                 this.estado = response.getUf();
             }
         }
     }
-
+    //------ Validação de Endereço para saber se chama todos os campos corretos ------//
+//    private void validarEndereco(Endereco endereco) {
+//        if (endereco == null || endereco.getCep() == null || endereco.getCep().isEmpty()) {
+//            throw new RuntimeException("O CEP do endereço é obrigatório.");
+//        }
+//        if (endereco.getRua() == null || endereco.getRua().isEmpty()) {
+//            throw new RuntimeException("A rua do endereço é obrigatória.");
+//        }
+//        // Outras validações conforme necessário
+//    }
+//
+    //Chamada para por no seviço de Atualizar
+//    if (empresaAtualizada.getEndereco() != null) {
+//        validarEndereco(empresaAtualizada.getEndereco());
+//    }
 
     // Getters e Setters
-
     public String getRua() {
         return rua;
     }
 
     public void setRua(String rua) {
         this.rua = rua;
-    }
-
-    public Integer getNumero() {
-        return numero;
-    }
-
-    public void setNumero(Integer numero) {
-        this.numero = numero;
     }
 
     public String getBairro() {
@@ -94,14 +78,5 @@ public class Endereco {
     public void setCep(String cep) {
         this.cep = cep;
     }
-
-    public CepServico getCepService() {
-        return cepService;
-    }
-
-    public void setCepService(CepServico cepService) {
-        this.cepService = cepService;
-    }
-
 
 }

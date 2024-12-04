@@ -18,6 +18,7 @@ public class Produto {
     private BigDecimal preco;
     private String imagemProdutoUrl;
 
+
     @ManyToOne
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;

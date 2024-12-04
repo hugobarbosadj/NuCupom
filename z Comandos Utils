@@ -11,3 +11,38 @@ O número no final é o PID (ID do processo).
 
 Com o PID em mãos, finalize o processo:
 taskkill /PID 1234 /F
+
+
+
+--------FilterChain Antigo-------
+@Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(csrf -> csrf.disable()) // Atualizado para usar a nova API
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/register",
+                                "/api/empresas/login",
+                                "/api/empresas/cadastrar",
+                                "/api/cep/**"
+                        ).permitAll()
+                        .requestMatchers("/api/{empresaId}/produto/cadastrar",
+                                "/api/empresas/info",
+                                "/api/empresas/{id}",
+                                "/api/empresas/",
+                                "/api/produtos/**",
+                                "/api/vouchers/verificar/{id}",
+                                "/api/vouchers/produto{id}",
+                                "/api/vouchers/{id}",
+                                "/api/vouchers/criar").authenticated() // Exigem token
+
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .authenticationProvider(authenticationProvider()); // Adiciona o authProvider
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }

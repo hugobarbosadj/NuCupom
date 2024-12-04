@@ -11,16 +11,13 @@ import java.util.Optional;
 @Repository
 public interface EmpresaRepository extends JpaRepository<Empresa, Long> {
 
-    Optional<Empresa> findByEmailOrCnpj(String email, String cnpj);
-
-    Empresa findByEmail(String email);
-
     Empresa findByCnpj(String cnpj);
 
     // Buscar empresas por CEP
-    List<Empresa> findByEndereco_Cep(String cep);
+    List<Empresa> findByEnderecoCep(String cep); // Correto com o novo mapeamento
 
-    // Buscar empresas por bairro
-    List<Empresa> findByEndereco_Bairro(String bairro);
+    // Buscar empresas por cidade e estado
+    List<Empresa> findByEnderecoCidadeAndEnderecoEstado(String cidade, String estado);
 }
+
 

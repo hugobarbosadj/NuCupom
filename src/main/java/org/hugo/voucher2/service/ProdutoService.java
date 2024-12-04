@@ -26,44 +26,46 @@ public class ProdutoService {
     @Autowired
     private EmpresaRepository empresaRepository;
 
-    public ProdutoService(ProdutoRepository produtoRepository) {
-        this.produtoRepository = produtoRepository;
+    public Produto cadastrarProduto(Long empresaId, Produto produto, MultipartFile imagemProduto) throws IOException {
+        Empresa empresa = empresaRepository.findById(empresaId)
+                .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
+        produto.setEmpresa(empresa);
+
+        return salvarProduto(produto, imagemProduto);
     }
 
-    public List<Produto> buscarProdutosPorEmpresa(Long empresaId) {
-        return produtoRepository.findByEmpresaId(empresaId);
-    }
-
-    public List<Produto> buscarProdutosPorCategoria(Categoria categoria) {
-        return produtoRepository.findByCategoria(categoria);
-    }
-
+    //Salvar imagem do produto tem que ser na pasta de imagem do produto para uma pasta do imagensProdutos.
     public Produto salvarProduto(Produto produto, MultipartFile imagemProduto) throws IOException {
         if (imagemProduto != null && !imagemProduto.isEmpty()) {
             String fileName = imagemProduto.getOriginalFilename();
-            Path path = Paths.get("uploads/produtos/" + fileName);
-            Files.copy(imagemProduto.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            Path diretorio = Paths.get("uploads/produtos/");
+            Files.createDirectories(diretorio);
+            Path caminhoCompleto = diretorio.resolve(fileName);
+            Files.copy(imagemProduto.getInputStream(), caminhoCompleto, StandardCopyOption.REPLACE_EXISTING);
             produto.setImagemProdutoUrl("/uploads/produtos/" + fileName);
         }
 
         return produtoRepository.save(produto);
     }
 
+    public Produto atualizarProduto(Long id, Produto produtoAtualizado, MultipartFile imagemProduto) throws IOException {
+        Produto produtoExistente = getProdutoById(id);
+
+        produtoExistente.setNome(produtoAtualizado.getNome());
+        produtoExistente.setDescricao(produtoAtualizado.getDescricao());
+        produtoExistente.setPreco(produtoAtualizado.getPreco());
+        produtoExistente.setCategoria(produtoAtualizado.getCategoria());
+
+        return salvarProduto(produtoExistente, imagemProduto);
+    }
+
+    //no front-end trocar categorias por filtro na categorias//
     public Produto getProdutoById(Long id) {
         return produtoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
     }
 
-    // Método cadastrarProduto
-    public Produto cadastrarProduto(Long empresaId, Produto produto, MultipartFile imagemProduto) throws IOException {
-        Optional<Empresa> empresaOptional = empresaRepository.findById(empresaId);
-        if (empresaOptional.isEmpty()) {
-            throw new RuntimeException("Empresa não encontrada");
-        }
-
-        Empresa empresa = empresaOptional.get();
-        produto.setEmpresa(empresa);
-
-        return salvarProduto(produto, imagemProduto);
+    public List<Produto> buscarProdutosPorEmpresa(Long empresaId) {
+        return produtoRepository.findByEmpresaId(empresaId);
     }
 }
