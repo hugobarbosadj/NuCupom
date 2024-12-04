@@ -1,33 +1,19 @@
-package org.hugo.voucher2.modelLogin;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig {
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .cors().and() // Ativa o suporte ao CORS
-                .authorizeHttpRequests()
-                .anyRequest().permitAll();
-
-        return http.build();
-    }
-}
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.security.authentication.AuthenticationManager;
+//import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+//import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+//import org.springframework.security.config.http.SessionCreationPolicy;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.web.SecurityFilterChain;
+//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+//
+//@Configuration
+//@EnableWebSecurity
+//public class SecurityConfig {
 //
 //    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 //    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -47,17 +33,18 @@ public class SecurityConfig {
 //    }
 //
 //    @Bean
-//    public DaoAuthenticationProvider authenticationProvider() {
-//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-//        authProvider.setUserDetailsService(customUserDetailsService);
-//        authProvider.setPasswordEncoder(passwordEncoder());
-//        return authProvider;
-//    }
-//
-//    @Bean
 //    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
 //        return authenticationConfiguration.getAuthenticationManager();
 //    }
+//
+//    @Bean
+//    public DaoAuthenticationProvider authenticationProvider() {
+//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+//        authProvider.setUserDetailsService(customUserDetailsService); // Configura o UserDetailsService
+//        authProvider.setPasswordEncoder(passwordEncoder());          // Configura o PasswordEncoder
+//        return authProvider;
+//    }
+//
 //
 //    @Bean
 //    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -70,6 +57,16 @@ public class SecurityConfig {
 //                                "/api/empresas/cadastrar",
 //                                "/api/cep/**"
 //                        ).permitAll()
+//                        .requestMatchers("/api/{empresaId}/produto/cadastrar",
+//                                "/api/empresas/info",
+//                                "/api/empresas/{id}",
+//                                "/api/empresas/",
+//                                "/api/produtos/**",
+//                                "/api/vouchers/verificar/{id}",
+//                                "/api/vouchers/produto{id}",
+//                                "/api/vouchers/{id}",
+//                                "/api/vouchers/criar").authenticated() // Exigem token
+//
 //                        .anyRequest().authenticated()
 //                )
 //                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -11,9 +11,14 @@ O número no final é o PID (ID do processo).
 
 Com o PID em mãos, finalize o processo:
 taskkill /PID 1234 /F
+___________________________
 
+-------Limpeza do projeto---------
 
+Certifique-se de que não há classes ou pacotes duplicados.
+Realize uma limpeza no projeto (mvn clean install ou similar).
 
+___________________________
 --------FilterChain Antigo-------
 @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

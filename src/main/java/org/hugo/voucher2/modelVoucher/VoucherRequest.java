@@ -1,7 +1,7 @@
-package org.hugo.voucher2.modelProduto;
+package org.hugo.voucher2.modelVoucher;
 
 public class VoucherRequest {
-        private Long voucherId; // Corrigido de productId para voucherId
+        private Long voucherId;
         private Long productId;
         private String nome;
         private String sobrenome;
